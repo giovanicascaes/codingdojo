@@ -1,86 +1,110 @@
-var test = require('tape');
+var unidades = ['', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove', 'dez', 'onze', 'doze', 'treze', 'quatorze', 'quinze', 'dezesseis', 'dezessete', 'dezoito', 'dezenove'];
+var dezenas = ['', 'dez', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];
+var centenas = ['cem', 'cento', 'duzentos', 'trezentos', 'quatrocentos', 'quinhentos', 'seissentos', 'setessentos', 'oitocentos', 'novecentos'];
+var demaisUnidades = [['mil', 'mil'], ['milhão', 'milhões'], ['bilhão', 'bilhões'], ['trilhão', 'trilhões'], ['quatrilhão', 'quatrilhões']];
 
-var arrayUnidade = ['zero', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove', 'dez', 'onze', 'doze', 'treze', 'quatorze', 'quinze', 'dezesseis', 'dezessete', 'dezoito', 'dezenove'];
-var dezena = ['', 'dez', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];
+var and = ' e ';
+
+module.exports = {
+    converterValorParaExtenso: function (valor) {
+        var arrayValores = valor.split(',');
+
+        var reais = arrayValores[0];
+        var centavos = arrayValores[1];
+
+        var valorPorExtenso = converterReais(reais);
+
+        if (parseInt(centavos) > 0) {
+            valorPorExtenso += and + converterCentavos(centavos);
+        }
+
+        valorPorExtenso = capitalizeFirstLetter(valorPorExtenso);
+
+        return valorPorExtenso;
+    }
+};
+
+function converterReais(reais) {
+    return converterNumero(reais, true);
+}
+
+function converterCentavos(reais) {
+    return converterNumero(reais, false);
+}
+
+function converterNumero(valor, real) {
+    var valorPorExtenso = '';
+
+    var valorInt = parseInt(valor);
+
+    if (valorInt > 0) {
+        if (valorInt <= 19) {
+            valorPorExtenso += unidades[valorInt];
+        } else if (valorInt <= 99) {
+            var valorIntString = valorInt.toString();
+            valorPorExtenso += dezenas[valorIntString.charAt(0)];
+
+            if (valorIntString.charAt(1) != '0') {
+                valorPorExtenso += and + unidades[valorIntString.charAt(1)];
+            }
+        } else if (valorInt <= 999) {
+            var dezena = valor.substr(1, 2);
+            var dezenaInt = parseInt(dezena);
+
+            if (valor.charAt(0) == '1' && dezenaInt == 0) {
+                valorPorExtenso += centenas[0];
+            } else {
+                valorPorExtenso += centenas[valor.charAt(0)];
+
+                if (dezenaInt > 0) {
+                    valorPorExtenso += and + converterNumero(dezena)
+                }
+            }
+        } else {
+            var tamanhoNumero = valor.length;
+            var modTres = tamanhoNumero % 3;
+
+            var countFirstNumbers = modTres == 0 ? 3 : modTres;
+            var countUnidades = modTres == 0 ? Math.floor(tamanhoNumero / 3) - 1 : Math.floor(tamanhoNumero / 3);
+
+            var firstNumbers = valor.substr(0, countFirstNumbers);
+            var lastNumbers = valor.substr(countFirstNumbers);
+            var firstNumbersInt = parseInt(firstNumbers);
+            var lastNumbersInt = parseInt(lastNumbers);
+
+            var firstNumbersGreaterThanZero = firstNumbersInt > 0;
+
+            if (firstNumbersGreaterThanZero) {
+                valorPorExtenso += converterNumero(firstNumbers) + ' ' + demaisUnidades[countUnidades - 1][firstNumbersInt > 1 ? 1 : 0];
+            }
+
+            if (lastNumbersInt > 0) {
+                // FIXME: Rever essa lógica
+                if (lastNumbersInt <= 99 || ((lastNumbers.charAt(0) == '0' || lastNumbers.charAt(2) == '0') && parseInt(lastNumbers.substr(3)) == 0)) {
+                    valorPorExtenso += and;
+                } else if (firstNumbersGreaterThanZero) {
+                    valorPorExtenso += ' ';
+                }
+
+                valorPorExtenso += converterNumero(lastNumbers);
+            } else if (countUnidades > 1) {
+                valorPorExtenso += ' de';
+            }
+        }
+
+        if (real != undefined) {
+            if (real) {
+                valorPorExtenso += ' ' + (valorInt > 1 ? 'reais' : 'real');
+            } else {
+                valorPorExtenso += ' ' + (valorInt > 1 ? 'centavos' : 'centavo');
+            }
+        }
+    }
+
+    // FIXME: Gambiarra
+    return valorPorExtenso.replace('  ', ' ');
+}
 
 function capitalizeFirstLetter(string) {
-    if (string == undefined || !string) return '';
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
-
-function tratarNumero(valor, tipoNumero) {
-  var unidadeMonetaria = '';
-  var valorPorExtenso = '';
-  var real = false;
-  var valorEmInteiro = parseInt(valor);
-  if (valorEmInteiro > 0){
-    var valorDecimalInt = valorEmInteiro;
-    var and = ' e '; 
-
-    if (tipoNumero == 'real') {
-      unidadeMonetaria = valorDecimalInt > 1 ? 'reais' : 'real';
-      real = true;
-    } else {
-      unidadeMonetaria = valorDecimalInt > 1 ? 'centavos' : 'centavo';
-    }
-
-    var unidade = arrayUnidade[valorDecimalInt];
-
-    if (valorDecimalInt <= 19) {
-      valorPorExtenso += unidade;
-    } else {
-      console.log(valorPorExtenso);
-      if(real){
-        
-      valorPorExtenso += and + dezena[valor.charAt(0)];
-      }
-      if (valor.charAt(1) != '0') {
-         valorPorExtenso += and + arrayUnidade[valor.charAt(1)];
-      }
-    }
-    valorPorExtenso += ' ' + unidadeMonetaria;
-  }
-  return valorPorExtenso;
-}
-
-function tratarReais(reais) {
-  return tratarNumero(reais, 'real');
-}
-
-var converteValorEmExtenso = function(valor) {
-  var arrayValores = valor.split(',');
-
-  var valorPorExtenso = '';
-
-  var reais = arrayValores[0]; 
-  var centavos = arrayValores[1]; 
-  var reaisInt = parseInt(reais);
-  var centavosInt = parseInt(centavos);
-
-  var real = reaisInt > 1 ? 'reais' : 'real';
-  var unidade = arrayUnidade[reais];
-
-  valorPorExtenso = tratarReais(reais)
-  if(centavos != '00') {
-    valorPorExtenso += tratarNumero(centavos, 'centavo');
-  }
-
-  valorPorExtenso = capitalizeFirstLetter(valorPorExtenso);
-  
-  return valorPorExtenso;  
-}
-
-test('testando cheque', function (t) {
-
-  t.equal(converteValorEmExtenso('1,00'), 'Um real', 'Deveria retornar Um real');
-  t.equal(converteValorEmExtenso('2,00'), 'Dois reais', 'Deveria retornar Dois reais');
-  t.equal(converteValorEmExtenso('3,00'), 'Três reais', 'Deveria retornar Tres reais');
-  t.equal(converteValorEmExtenso('3,40'), 'Três reais e quarenta centavos', 'Deveria retornar Tres reais e quarenta centavos');
-  t.equal(converteValorEmExtenso('15,00'), 'Quinze reais', 'Deveria retornar Quinze reais');
-  t.equal(converteValorEmExtenso('22,00'), 'Vinte e dois reais', 'Deveria retornar Vinte e dois reais');
-  t.equal(converteValorEmExtenso('29,03'), 'Vinte e nove reais e três centavos', 'Deveria retornar Vinte e nove reais e três <centavos></centavos>');
-  t.equal(converteValorEmExtenso('29,33'), 'Vinte e nove reais e trinta e três centavos', 'Deveria retornar Vinte e nove reais e trinta e três <centavos></centavos>');
-  
-  t.end();
-
-});
