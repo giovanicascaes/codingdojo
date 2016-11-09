@@ -62,28 +62,54 @@ function converterNumero(valor, real) {
             }
         } else {
             var tamanhoNumero = valor.length;
-            var modTres = tamanhoNumero % 3;
+            var tamanhoNumeroMod3 = tamanhoNumero % 3;
 
-            var countFirstNumbers = modTres == 0 ? 3 : modTres;
-            var countUnidades = modTres == 0 ? Math.floor(tamanhoNumero / 3) - 1 : Math.floor(tamanhoNumero / 3);
+            var countFirstNumbers = tamanhoNumeroMod3 == 0 ? 3 : tamanhoNumeroMod3;
+            var countUnidades = tamanhoNumeroMod3 == 0 ? Math.floor(tamanhoNumero / 3) - 1 : Math.floor(tamanhoNumero / 3);
 
             var firstNumbers = valor.substr(0, countFirstNumbers);
             var lastNumbers = valor.substr(countFirstNumbers);
             var firstNumbersInt = parseInt(firstNumbers);
             var lastNumbersInt = parseInt(lastNumbers);
 
-            var firstNumbersGreaterThanZero = firstNumbersInt > 0;
-
-            if (firstNumbersGreaterThanZero) {
+            if (firstNumbersInt > 0) {
                 valorPorExtenso += converterNumero(firstNumbers) + ' ' + demaisUnidades[countUnidades - 1][firstNumbersInt > 1 ? 1 : 0];
             }
 
             if (lastNumbersInt > 0) {
-                // FIXME: Rever essa lógica
-                if (lastNumbersInt <= 99 || ((lastNumbers.charAt(0) == '0' || lastNumbers.charAt(2) == '0') && parseInt(lastNumbers.substr(3)) == 0)) {
+                if (lastNumbersInt <= 99) {
                     valorPorExtenso += and;
-                } else if (firstNumbersGreaterThanZero) {
-                    valorPorExtenso += ' ';
+                } else {
+                    var boolAux = false;
+                    var anexarAnd = false;
+
+                    for (var i = countUnidades; i > 0; i--) {
+                        var unidade = lastNumbers.substr(lastNumbers.length - (i * 3), 3);
+                        var unidadeInt = parseInt(unidade);
+
+                        if (unidadeInt == 0) {
+                            if (!boolAux) {
+                                lastNumbers = lastNumbers.substr(3);
+                            }
+                        } else {
+                            boolAux = true;
+
+                            if ((i == 1 && unidadeInt > 99 && unidade.substr(1, 2) == '00') || (i > 1 && (unidadeInt.toString().length == 1 || (unidadeInt.toString().length == 2 && unidade.charAt(2) == '0') || (unidade.length == 3 && unidade.substr(1, 2) == '00')))) {
+                                if (!anexarAnd) {
+                                    anexarAnd = true;
+                                } else {
+                                    anexarAnd = false;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (anexarAnd) {
+                        valorPorExtenso += and;
+                    } else if (firstNumbersInt > 0) {
+                        valorPorExtenso += ' ';
+                    }
                 }
 
                 valorPorExtenso += converterNumero(lastNumbers);
