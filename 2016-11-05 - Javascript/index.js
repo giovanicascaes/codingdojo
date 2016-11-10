@@ -80,34 +80,43 @@ function converterNumero(valor, real) {
                 if (lastNumbersInt <= 99) {
                     valorPorExtenso += and;
                 } else {
-                    var boolAux = false;
+                    var verificouZeros = false;
                     var anexarAnd = false;
-
-                    for (var i = countUnidades; i > 0; i--) {
+                    console.log('\n');
+                    console.log('valor = "' + valor + '"; firstNumbers = "' + firstNumbers + '"; lastNumbers = "' + lastNumbers + '"');
+                    console.log('countUnidades = "' + countUnidades + '"');
+                    for (var i = countUnidades, j = 0; i > 0; i--) {
                         var unidade = lastNumbers.substr(lastNumbers.length - (i * 3), 3);
                         var unidadeInt = parseInt(unidade);
-
+                        console.log('unidade = "' + unidade + '"');
+                        console.log('i = "' + i + '"');
+                        console.log('j = "' + j + '"');
                         if (unidadeInt == 0) {
-                            if (!boolAux) {
+                            if (!verificouZeros) {
                                 lastNumbers = lastNumbers.substr(3);
+                                countUnidades--;
                             }
                         } else {
-                            boolAux = true;
+                            verificouZeros = true;
 
-                            if ((i == 1 && unidadeInt > 99 && unidade.substr(1, 2) == '00') || (i > 1 && (unidadeInt.toString().length == 1 || (unidadeInt.toString().length == 2 && unidade.charAt(2) == '0') || (unidade.length == 3 && unidade.substr(1, 2) == '00')))) {
+                            if (i == 1 && countUnidades > 1) {
+                                anexarAnd = false;
+                            } else if (unidadeInt < 99 || unidade.substr(1, 2) == '00') {
                                 if (!anexarAnd) {
                                     anexarAnd = true;
                                 } else {
                                     anexarAnd = false;
+
                                     break;
                                 }
                             }
                         }
+                        console.log('anexarAnd = "' + anexarAnd + '"');
                     }
-
+                    console.log('anexarAnd [final] = "' + anexarAnd + '"');
                     if (anexarAnd) {
                         valorPorExtenso += and;
-                    } else if (firstNumbersInt > 0) {
+                    } else {
                         valorPorExtenso += ' ';
                     }
                 }

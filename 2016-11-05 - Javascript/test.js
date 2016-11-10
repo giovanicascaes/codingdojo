@@ -33,7 +33,18 @@ test('testando cheque', function (t) {
     t.equal(index.converterValorParaExtenso('999999999999999,99'), 'Novecentos e noventa e nove trilhões novecentos e noventa e nove bilhões novecentos e noventa e nove milhões novecentos e noventa e nove mil novecentos e noventa e nove reais e noventa e nove centavos', 'Deve retornar Novecentos e noventa e nove trilhões novecentos e noventa e nove bilhões novecentos e noventa e nove milhões novecentos e noventa e nove mil novecentos e noventa e nove reais e noventa e nove centavos');
     t.equal(index.converterValorParaExtenso('501000005000010,00'), 'Quinhentos e um trilhões cinco milhões e dez reais', 'Deve retornar Quinhentos e um trilhões cinco bilhões e dez reais');
     t.equal(index.converterValorParaExtenso('100000000000,00'), 'Cem bilhões de reais', 'Deve retornar Cem bilhões de reais');
-    t.equal(index.converterValorParaExtenso('20000021000,00'), 'Vinte bilhões vinte e um mil reais', 'Deve retornar Vinte bilhões vinte e um mil reais') ;
+    t.equal(index.converterValorParaExtenso('20000021000,00'), 'Vinte bilhões e vinte e um mil reais', 'Deve retornar Vinte bilhões e vinte e um mil reais');
+    t.equal(index.converterValorParaExtenso('15008,00'), 'Quinze mil e oito reais', 'Deve retornar Quinze mil e oito reais');
+    t.equal(index.converterValorParaExtenso('1001001,00'), 'Um milhão um mil e um reais', 'Deve retornar Um milhão um mil e um reais');
+    t.equal(index.converterValorParaExtenso('1001000000,00'), 'Um bilhão e um milhão de reais', 'Deve retornar Um bilhão e um milhão de reais');
+    t.equal(index.converterValorParaExtenso('1001000100,00'), 'Um bilhão um milhão e cem reais', 'Deve retornar Um bilhão um milhão e cem reais');
+    t.equal(index.converterValorParaExtenso('1001000101,00'), 'Um bilhão um milhão cento e um reais', 'Deve retornar Um bilhão um milhão e cento e um reais');
+    t.equal(index.converterValorParaExtenso('1000101000,00'), 'Um bilhão cento e um mil reais', 'Deve retornar Um bilhão cento e um mil reais');
+    t.equal(index.converterValorParaExtenso('1000101100,00'), 'Um bilhão cento e um mil e cem reais', 'Deve retornar Um bilhão cento e um mil e cem reais');
+    t.equal(index.converterValorParaExtenso('1000101101,00'), 'Um bilhão cento e um mil cento e um reais', 'Deve retornar Um bilhão cento e um mil cento e um reais');
+    t.equal(index.converterValorParaExtenso('1000000101,00'), 'Um bilhão cento e um reais', 'Deve retornar Um bilhão cento e um reais');
+    t.equal(index.converterValorParaExtenso('1001000000,00'), 'Um bilhão e um milhão de reais', 'Deve retornar Um bilhão e um milhão de reais');
+    t.equal(index.converterValorParaExtenso('1001000001,00'), 'Um bilhão um milhão e um reais', 'Deve retornar Um bilhão um milhão e um reais');
 
     t.end();
 });
