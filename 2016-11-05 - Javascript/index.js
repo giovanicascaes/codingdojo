@@ -77,20 +77,17 @@ function converterNumero(valor, real) {
             }
 
             if (lastNumbersInt > 0) {
+                // Daqui...
                 if (lastNumbersInt <= 99) {
                     valorPorExtenso += and;
                 } else {
                     var verificouZeros = false;
                     var anexarAnd = false;
-                    console.log('\n');
-                    console.log('valor = "' + valor + '"; firstNumbers = "' + firstNumbers + '"; lastNumbers = "' + lastNumbers + '"');
-                    console.log('countUnidades = "' + countUnidades + '"');
-                    for (var i = countUnidades, j = 0; i > 0; i--) {
+
+                    for (var i = countUnidades; i > 0; i--) {
                         var unidade = lastNumbers.substr(lastNumbers.length - (i * 3), 3);
                         var unidadeInt = parseInt(unidade);
-                        console.log('unidade = "' + unidade + '"');
-                        console.log('i = "' + i + '"');
-                        console.log('j = "' + j + '"');
+
                         if (unidadeInt == 0) {
                             if (!verificouZeros) {
                                 lastNumbers = lastNumbers.substr(3);
@@ -111,15 +108,15 @@ function converterNumero(valor, real) {
                                 }
                             }
                         }
-                        console.log('anexarAnd = "' + anexarAnd + '"');
                     }
-                    console.log('anexarAnd [final] = "' + anexarAnd + '"');
+
                     if (anexarAnd) {
                         valorPorExtenso += and;
                     } else {
                         valorPorExtenso += ' ';
                     }
                 }
+                // ...até aqui é só para verificar se deve adicionar o ' e ' ou ' '
 
                 valorPorExtenso += converterNumero(lastNumbers);
             } else if (countUnidades > 1) {
