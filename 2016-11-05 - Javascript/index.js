@@ -133,8 +133,7 @@ function converterNumero(valor, real) {
         }
     }
 
-    // FIXME: Gambiarra
-    return valorPorExtenso.replace('  ', ' ');
+    return valorPorExtenso;
 }
 
 function capitalizeFirstLetter(string) {
